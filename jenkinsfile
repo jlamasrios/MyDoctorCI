@@ -49,7 +49,7 @@ try{
                     }
                 }
                 stage('Run unit tests'){
-                    withCredentials([usernamePassword(credentialsId: '"${credId}", passwordVariable: 'gxserverpwd', usernameVariable: 'gxserveruser')]){
+                    withCredentials([usernamePassword(credentialsId: "${credId}", passwordVariable: 'gxserverpwd', usernameVariable: 'gxserveruser')]){
                         bat label: 'Run unit tests', script: '''
                         "%msbuildtool%\\msbuild.exe" "%ProjectFolder%\\genexus\\GXtest.msbuild" /t:RunAllTests
 						/p:KBPath="%LOCALKBPATH%"
