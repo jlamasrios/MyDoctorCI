@@ -1,5 +1,5 @@
 try{
-    node('windows'){
+    node(){
 		def gxserverURL = 'http://armin-hyperv/HealthSystems'
         stage("Checkout"){
             withFolderProperties{
