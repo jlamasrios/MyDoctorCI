@@ -1,34 +1,56 @@
 try{
     node(){
+		def gxPath = 'G:\\GX\\17'
 		def gxserverURL = 'http://armin-hyperv/HealthSystems'
+		def credId = 'c845aebb-352a-447b-94d3-c9d24ab5a24a'
+		def serverKB = 'MyDoctor'
+
+		def localKbPath = 'G:\\KBs\\MyDoctorCI'
+		def dbms = '.\\SQLEXPRESS'
+		
         stage("Checkout"){
             withFolderProperties{
                 checkout scm: [
                     $class: 'GeneXusServerSCM',
-                    credentialsId: 'c845aebb-352a-447b-94d3-c9d24ab5a24a',
+                    credentialsId: "${credId}",
                     gxInstallationId: '17',
                     kbDbInSameFolder: true,
-                    kbDbServerInstance: '.\\SQLEXPRESS',
-                    localKbPath: "G:\\KBs\\MyDoctorCI",
-                    kbName: "MyDoctor",
+                    kbDbServerInstance: "${dbms}",
+                    localKbPath: "${localKbPath}",
+                    kbName: "${serverKB}",
                     serverURL: "${gxserverURL}"
                     ], poll:true, changelog:true
             }
         }
         withFolderProperties{
             def msbuildtool = tool name: 'MSBuild 16', type: 'msbuild'
-            withEnv(["MSBUILDTOOL=${msbuildtool}", "GXSERVERURL=${gxserverURL}"]) {
+            withEnv([
+				"MSBUILDTOOL=${msbuildtool}",
+				"MSBUILDSCRIPT=${gxPath}\\TeamDev.msbuild",
+				"GXPATH=${gxPath}",
+				"GXSERVERURL=${gxserverURL}",
+				"SERVERKB=${serverKB}",
+				"LOCALKBPATH=${localKbPath}",
+				"DBMS"=${dbms}
+			]) {
                 stage('KB Build'){
-                    withCredentials([usernamePassword(credentialsId: 'c845aebb-352a-447b-94d3-c9d24ab5a24a', passwordVariable: 'gxserverpwd', usernameVariable: 'gxserveruser')]) {
+                    withCredentials([usernamePassword(credentialsId: "${credId}", passwordVariable: 'gxserverpwd', usernameVariable: 'gxserveruser')]) {
                         bat label: 'Build all', script: '''
-                        "%msbuildtool%\\msbuild.exe" /t:build /p:GX_PROGRAM_DIR=G:\\GX\\17 /p:WorkingDirectory=G:\\KBs\\MyDoctorCI  /p:ServerUrl=%GXSERVERURL% /p:DbaseServerInstance=.\\SQLEXPRESS /p:ServerKbAlias="MyDoctor" /p:ServerUsername=%gxserveruser% /p:ServerPassword=%gxserverpwd% G:\\GX\\17\\TeamDev.msbuild
+                        "%msbuildtool%\\msbuild.exe" %MSBUILDSCRIPT% /t:build
+							/p:GX_PROGRAM_DIR=%GXPATH%
+							/p:WorkingDirectory=%LOCALKBPATH%
+							/p:ServerUrl=%GXSERVERURL%
+							/p:DbaseServerInstance=%DBMS%
+							/p:ServerKbAlias=%SERVERKB%
+							/p:ServerUsername=%gxserveruser%
+							/p:ServerPassword=%gxserverpwd%
                         '''
                     }
                 }
                 stage('Run unit tests'){
                     withCredentials([usernamePassword(credentialsId: 'c845aebb-352a-447b-94d3-c9d24ab5a24a', passwordVariable: 'gxserverpwd', usernameVariable: 'gxserveruser')]){
                         bat label: 'Run unit tests', script: '''
-                        "%msbuildtool%\\msbuild.exe" /t:RunAllTests /p:KBPath=G:\\KBs\\MyDoctorCI /p:TestType="Unit" /p:GXServerUser=%gxserveruser% /p:GXServerPass=%gxserverpwd% \"%ProjectFolder%\\genexus\\GXtest.msbuild\"
+                        "%msbuildtool%\\msbuild.exe" /t:RunAllTests /p:KBPath=%LOCALKBPATH% /p:TestType="Unit" /p:GXServerUser=%gxserveruser% /p:GXServerPass=%gxserverpwd% \"%ProjectFolder%\\genexus\\GXtest.msbuild\"
                         '''
                     }
                 }
