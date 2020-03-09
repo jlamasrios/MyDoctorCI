@@ -26,7 +26,7 @@ try{
             def msbuildtool = tool name: 'MSBuild 16', type: 'msbuild'
             withEnv([
 				"MSBUILDTOOL=${msbuildtool}",
-				"MSBUILDSCRIPT=${workspace}\\General.msbuild",
+				"MSBUILDSCRIPT=\"${workspace}\\General.msbuild\"",
 				"GXPATH=${gxPath}",
 				"GXSERVERURL=${gxserverURL}",
 				"SERVERKB=${serverKB}",
@@ -37,7 +37,7 @@ try{
 					git changelog: false, poll: false, url: 'https://github.com/jlamasrios/MyDoctorCI.git'
                     withCredentials([usernamePassword(credentialsId: "${credId}", passwordVariable: 'gxserverpwd', usernameVariable: 'gxserveruser')]) {
                         bat label: 'Build all', script: '''
-                        "%msbuildtool%\\msbuild.exe" "%MSBUILDSCRIPT%" /t:build
+                        "%msbuildtool%\\msbuild.exe" %MSBUILDSCRIPT% /t:build
 							/p:GX_PROGRAM_DIR="%GXPATH%"
 							/p:WorkingDirectory="%LOCALKBPATH%"
 							/p:ServerUrl="%GXSERVERURL%"
