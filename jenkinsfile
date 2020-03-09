@@ -31,7 +31,7 @@ try{
 				"GXSERVERURL=${gxserverURL}",
 				"SERVERKB=${serverKB}",
 				"LOCALKBPATH=${localKbPath}",
-				"DBMS"=${dbms}
+				"DBMS=${dbms}"
 			]) {
                 stage('KB Build'){
 					git changelog: false, poll: false, url: 'https://github.com/jlamasrios/MyDoctorCI.git'
