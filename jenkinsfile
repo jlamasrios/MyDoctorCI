@@ -39,11 +39,11 @@ try{
                         bat label: 'Build all', script: '''
                         "%msbuildtool%\\msbuild.exe" "%MSBUILDSCRIPT%" /t:build ^
 							/p:GX_PROGRAM_DIR="%GXPATH%" ^
-							/p:WorkingDirectory="%LOCALKBPATH%"
-							/p:ServerUrl="%GXSERVERURL%"
-							/p:DbaseServerInstance="%DBMS%"
-							/p:ServerKbAlias="%SERVERKB%"
-							/p:ServerUsername=%gxserveruser%
+							/p:WorkingDirectory="%LOCALKBPATH%" ^
+							/p:ServerUrl="%GXSERVERURL%" ^
+							/p:DbaseServerInstance="%DBMS%" ^
+							/p:ServerKbAlias="%SERVERKB%" ^
+							/p:ServerUsername=%gxserveruser% ^
 							/p:ServerPassword=%gxserverpwd%
                         '''
                     }
@@ -52,9 +52,9 @@ try{
                     withCredentials([usernamePassword(credentialsId: "${credId}", passwordVariable: 'gxserverpwd', usernameVariable: 'gxserveruser')]){
                         bat label: 'Run unit tests', script: '''
                         "%msbuildtool%\\msbuild.exe" "%ProjectFolder%\\genexus\\GXtest.msbuild" /t:RunAllTests
-						/p:KBPath="%LOCALKBPATH%"
-						/p:TestType="Unit"
-						/p:GXServerUser=%gxserveruser%
+						/p:KBPath="%LOCALKBPATH%" ^
+						/p:TestType="Unit" ^
+						/p:GXServerUser=%gxserveruser% ^
 						/p:GXServerPass=%gxserverpwd% 
                         '''
                     }
