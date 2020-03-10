@@ -113,15 +113,14 @@
 			Directory = "$(WorkingDirectory1)"
 			DatabaseUser="$(DbaseServerUsername)"
 			DatabasePassword="$(DbaseServerPassword)"
-			Directory="$(WorkingDirectory)"
 		/>
 
 		<CreateKnowledgeBase
 			Condition=" '$(KbAlreadyExisted)' != 'true' "
 			Directory = "$(WorkingDirectory1)"
 			Template="CSharp.KBTemplate"
+			DatabaseUser="$(DbaseServerUsername)"
 			DatabasePassword="$(DbaseServerPassword)"
-			Directory="$(WorkingDirectory)"
 		/>
 
 	</Target>
