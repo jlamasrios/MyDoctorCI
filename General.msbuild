@@ -84,14 +84,56 @@
 			DatabasePassword="$(DbaseServerPassword)"
 			Directory="$(WorkingDirectory)"/>
 	</Target>
+	
+	<Target Name="OpenWorkingKB" DependsOnTargets="SafeOpen;Update" />
+	
+	<Target Name="SafeOpen" DependsOnTargets="CheckKb;OpenOrCreate"/>
 
-	<Target Name="Open" DependsOnTargets="OpenKB;SelectVersion;SelectEnvironment;SetLocalProperties"/>
+	<Target Name="CheckKb">
+		<Error Condition="'$(WorkingDirectory1)'==''" Text="WorkingDirectory1 cannot be null" />
+		<ItemGroup>
+			<GxwFile Include="$(WorkingDirectory1)\*.gxw" />
+		</ItemGroup>
+		<Message Text='Checking KB at "$(WorkingDirectory1)"' />
+		<Message Text="%(GxwFile.Identity)" />
+
+		<PropertyGroup>
+			<KbAlreadyExisted Condition=" '@(GxwFile)' != '' " >true</KbAlreadyExisted>
+			<KbAlreadyExisted Condition=" '@(GxwFile)' == '' " >false</KbAlreadyExisted>
+		</PropertyGroup>
+
+		<Message Text="   already exists" Condition=" '$(KBAlreadyExisted)' == 'true' " />
+		<Message Text="   does not exist" Condition=" '$(KBAlreadyExisted)' != 'true' " />
+	</Target>
+
+	<Target Name="OpenOrCreate" >
+
+		<OpenKnowledgeBase
+			Condition=" '$(KbAlreadyExisted)' == 'true' "
+			Directory = "$(WorkingDirectory1)"
+			DatabaseUser="$(DbaseServerUsername)"
+			DatabasePassword="$(DbaseServerPassword)"
+			Directory="$(WorkingDirectory)"
+		/>
+
+		<CreateKnowledgeBase
+			Condition=" '$(KbAlreadyExisted)' != 'true' "
+			Directory = "$(WorkingDirectory1)"
+			Template="CSharp.KBTemplate"
+			DatabasePassword="$(DbaseServerPassword)"
+			Directory="$(WorkingDirectory)"
+		/>
+
+	</Target>
+
+
+	<Target Name="Open" DependsOnTargets="OpenWorkingKB;SelectVersion;SelectEnvironment;SetLocalProperties"/>
 	<Target Name="CheckOut" DependsOnTargets="CreateKB;SelectVersion;SelectEnvironment;SetLocalProperties"/>
 	<Target Name="CleanCheckOut" DependsOnTargets="CleanWorkingDirectory;CheckOut" />
 	<Target Name="CleanWorkingDirectory" DependsOnTargets="DeleteOperationalDBs;DeleteKB;CleanFolder" />
 
-	<Target Name="Update" DependsOnTargets="Open">
-		<UpdateFromServer	ServerUserName="$(ServerUsername)" ServerPassword="$(ServerPassword)" />
+	<Target Name="Update" DependsOnTargets="SafeOpen">
+		<UpdateFromServer ServerUserName="$(ServerUsername)" ServerPassword="$(ServerPassword)" />
 	</Target>
 
 	<Target Name="CreateDB" DependsOnTargets="Open">
@@ -103,7 +145,7 @@
 	</Target>
 	
 	<Target Name="Build" DependsOnTargets="Open">
-		<BuildAll ForceRebuild="$(ForceRebuild)"/>
+		<BuildAll ForceRebuild="$(ForceRebuild)" CompileMains="true" />
 	</Target>
 
 	<Target Name="SetSqlCmdOptions">
