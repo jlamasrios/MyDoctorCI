@@ -90,11 +90,11 @@
 	<Target Name="SafeOpen" DependsOnTargets="CheckKb;OpenOrCreate"/>
 
 	<Target Name="CheckKb">
-		<Error Condition="'$(WorkingDirectory1)'==''" Text="WorkingDirectory1 cannot be null" />
+		<Error Condition="'$(WorkingDirectory)'==''" Text="WorkingDirectory cannot be null" />
 		<ItemGroup>
-			<GxwFile Include="$(WorkingDirectory1)\*.gxw" />
+			<GxwFile Include="$(WorkingDirectory)\*.gxw" />
 		</ItemGroup>
-		<Message Text='Checking KB at "$(WorkingDirectory1)"' />
+		<Message Text='Checking KB at "$(WorkingDirectory)"' />
 		<Message Text="%(GxwFile.Identity)" />
 
 		<PropertyGroup>
@@ -110,14 +110,14 @@
 
 		<OpenKnowledgeBase
 			Condition=" '$(KbAlreadyExisted)' == 'true' "
-			Directory = "$(WorkingDirectory1)"
+			Directory = "$(WorkingDirectory)"
 			DatabaseUser="$(DbaseServerUsername)"
 			DatabasePassword="$(DbaseServerPassword)"
 		/>
 
 		<CreateKnowledgeBase
 			Condition=" '$(KbAlreadyExisted)' != 'true' "
-			Directory = "$(WorkingDirectory1)"
+			Directory = "$(WorkingDirectory)"
 			Template="CSharp.KBTemplate"
 			DatabaseUser="$(DbaseServerUsername)"
 			DatabasePassword="$(DbaseServerPassword)"
