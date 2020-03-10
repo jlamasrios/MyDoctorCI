@@ -115,13 +115,23 @@
 			DatabasePassword="$(DbaseServerPassword)"
 		/>
 
-		<CreateKnowledgeBase
+		<CreateKnowledgeBaseFromServer
 			Condition=" '$(KbAlreadyExisted)' != 'true' "
-			Directory = "$(WorkingDirectory)"
-			Template="CSharp.KBTemplate"
-			DatabaseUser="$(DbaseServerUsername)"
-			DatabasePassword="$(DbaseServerPassword)"
+			Directory="$(WorkingDirectory)"
+			CreateDbInKbFolder="$(CreateDbInKbFolder)"
+			DBName="$(DbaseName)"
+			IntegratedSecurity="$(DbaseUseIntegratedSecurity)"
+			UserId="$(DbaseServerUsername)"
+			Password="$(DbaseServerPassword)"
+			ServerUri="$(ServerUrl)"
+			ServerInstance="$(DbaseServerInstance)"
+			ServerKBAlias="$(ServerKbAlias)"
+			ServerVersionName="$(ServerKbVersion)"
+			ServerUserName="$(ServerUsername)"
+			ServerPassword="$(ServerPassword)"
+			FullKB="$(GetAllKbVersions)"
 		/>
+
 
 	</Target>
 
@@ -144,7 +154,7 @@
 	</Target>
 	
 	<Target Name="Build" DependsOnTargets="Open">
-		<BuildAll ForceRebuild="$(ForceRebuild)" CompileMains="true" />
+		<BuildAll CompileMains="true" ForceRebuild="$(ForceRebuild)"/>
 	</Target>
 
 	<Target Name="SetSqlCmdOptions">
