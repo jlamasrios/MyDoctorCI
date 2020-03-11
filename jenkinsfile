@@ -33,8 +33,7 @@ try{
 				"GXSERVERPWD=${gxserverpwd}",
 				"SERVERKB=${serverKB}",
 				"LOCALKBPATH=${localKbPath}",
-				"DBMS=${dbms}",
-				"PROJECTFOLDER=${ProjectFolder}"
+				"DBMS=${dbms}"
 			]) {
                 stage('KB Build'){
 					git changelog: false, poll: false, url: 'https://github.com/jlamasrios/MyDoctorCI.git'
@@ -47,7 +46,7 @@ try{
                 stage('Run unit tests'){
                     withCredentials([usernamePassword(credentialsId: "${credId}", passwordVariable: 'gxserverpwd', usernameVariable: 'gxserveruser')]){
                         bat label: 'Run unit tests', script: '''
-                        "%msbuildtool%\\msbuild.exe" "%PROJECTFOLDER%\\genexus\\GXtest.msbuild" /t:RunAllTests
+                        "%msbuildtool%\\msbuild.exe" "%GXPATH%\\GXtest.msbuild" /t:RunAllTests
 						/p:KBPath="%LOCALKBPATH%" /p:TestType="Unit" /p:GXServerUser=%GXSERVERUSER% /p:GXServerPass=%GXSERVERPWD% 
                         '''
                     }
