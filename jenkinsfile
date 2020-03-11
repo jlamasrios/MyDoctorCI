@@ -29,9 +29,12 @@ try{
 				"MSBUILDSCRIPT=${workspace}\\General.msbuild",
 				"GXPATH=${gxPath}",
 				"GXSERVERURL=${gxserverURL}",
+				"GXSERVERUSER=${gxserveruser}",
+				"GXSERVERPWD=${gxserverpwd}",
 				"SERVERKB=${serverKB}",
 				"LOCALKBPATH=${localKbPath}",
-				"DBMS=${dbms}"
+				"DBMS=${dbms}",
+				"PROJECTFOLDER=${ProjectFolder}"
 			]) {
                 stage('KB Build'){
 					git changelog: false, poll: false, url: 'https://github.com/jlamasrios/MyDoctorCI.git'
@@ -44,8 +47,8 @@ try{
                 stage('Run unit tests'){
                     withCredentials([usernamePassword(credentialsId: "${credId}", passwordVariable: 'gxserverpwd', usernameVariable: 'gxserveruser')]){
                         bat label: 'Run unit tests', script: '''
-                        "%msbuildtool%\\msbuild.exe" "%ProjectFolder%\\genexus\\GXtest.msbuild" /t:RunAllTests
-						/p:KBPath="%LOCALKBPATH%" /p:TestType="Unit" /p:GXServerUser=%gxserveruser% /p:GXServerPass=%gxserverpwd% 
+                        "%msbuildtool%\\msbuild.exe" "%PROJECTFOLDER%\\genexus\\GXtest.msbuild" /t:RunAllTests
+						/p:KBPath="%LOCALKBPATH%" /p:TestType="Unit" /p:GXServerUser=%GXSERVERUSER% /p:GXServerPass=%GXSERVERPWD% 
                         '''
                     }
                 }
