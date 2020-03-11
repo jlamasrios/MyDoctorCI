@@ -1,7 +1,7 @@
 try{
     node(){
 		def gxPath = 'G:\\GX\\17'
-		def gxserverURL = 'http://armin-hyperv/HealthSystems'
+		def gxserverURL = 'http://mydoctor.genexusserver.com/GXserver17'
 		def credId = 'c845aebb-352a-447b-94d3-c9d24ab5a24a'
 		def serverKB = 'MyDoctor'
 
