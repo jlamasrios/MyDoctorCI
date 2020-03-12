@@ -32,7 +32,7 @@ try{
 				"SERVERKB=${serverKB}",
 				"LOCALKBPATH=${localKbPath}",
 				"WebBackofficeName=WebBackoffice",
-				"DeployPath=${localKbPath}\\Deploy\\",
+				"DeployPath=${localKbPath}\\Deploy",
 				"DBMS=${dbms}"
 			]) {
                 stage('KB Build'){
