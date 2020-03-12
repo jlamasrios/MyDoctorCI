@@ -56,7 +56,7 @@ try{
                 }
 				stage('Create Deploy Specification') {
 					bat label: 'Create Deploy Spec', script: '''
-					"%msbuildtool%\\msbuild.exe" /nologo /logger:DeployLogger,"%GXPATH%\\GeneXus.Deploy.MSBuild.Tasks.dll" /verbosity:normal /ToolsVersion:4.0 "%GXPATH%\\deploy.msbuild" /p:KBPath="%LOCALKBPATH%" /p:ProjectName="%WebBackofficeName%" /p:ObjectNames="DeploymentUnit:WebBackoffice" /p:ApplicationServer="IIS8" /p:GX_PROGRAM_DIR="%GXPATH%" /p:INCLUDE_GAM="False" /p:DeployFileFullPath="%DeployPath%" /t:CreateDeploy
+					"%msbuildtool%\\msbuild.exe" /nologo /logger:DeployLogger,"%GXPATH%\\GeneXus.Deploy.MSBuild.Tasks.dll" /verbosity:normal /ToolsVersion:4.0 "%GXPATH%\\deploy.msbuild" /p:KBPath="%LOCALKBPATH%" /p:ProjectName="%WebBackofficeName%" /p:ObjectNames="DeploymentUnit:WebBackoffice" /p:ApplicationServer="IIS8" /p:GX_PROGRAM_DIR="%GXPATH%" /p:INCLUDE_GAM="False" /p:OutputPath="%DeployPath%" /t:CreateDeploy
 					'''
 				}
 				stage('Create Deploy Package') {
