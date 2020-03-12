@@ -61,7 +61,7 @@ try{
 				}
 				stage('Create Deploy Package') {
 					bat label: 'Create Deploy Package', script: '''
-					"%msbuildtool%\\msbuild.exe" /nologo /logger:DeployLogger,"%GXPATH%\\GeneXus.Deploy.MSBuild.Tasks.dll" /verbosity:normal /ToolsVersion:4.0 "%DeployPath%%WebBackofficeName%.gxdproj" /p:GX_PROGRAM_DIR="%GXPATH%" /t:CreatePackage
+					"%msbuildtool%\\msbuild.exe" /nologo /logger:DeployLogger,"%GXPATH%\\GeneXus.Deploy.MSBuild.Tasks.dll" /verbosity:normal /ToolsVersion:4.0 "%DeployPath%\\%WebBackofficeName%.gxdproj" /p:GX_PROGRAM_DIR="%GXPATH%" /t:CreatePackage
 					'''
 				}
 				stage('Create Docker File') {
