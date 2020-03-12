@@ -29,8 +29,6 @@ try{
 				"MSBUILDSCRIPT=${workspace}\\General.msbuild",
 				"GXPATH=${gxPath}",
 				"GXSERVERURL=${gxserverURL}",
-				"GXSERVERUSER=${gxserveruser}",
-				"GXSERVERPWD=${gxserverpwd}",
 				"SERVERKB=${serverKB}",
 				"LOCALKBPATH=${localKbPath}",
 				"DBMS=${dbms}"
@@ -47,7 +45,7 @@ try{
                     withCredentials([usernamePassword(credentialsId: "${credId}", passwordVariable: 'gxserverpwd', usernameVariable: 'gxserveruser')]){
                         bat label: 'Run unit tests', script: '''
                         "%msbuildtool%\\msbuild.exe" "%GXPATH%\\GXtest.msbuild" /t:RunAllTests
-						/p:KBPath="%LOCALKBPATH%" /p:TestType="Unit" /p:GXServerUser=%GXSERVERUSER% /p:GXServerPass=%GXSERVERPWD% 
+						/p:KBPath="%LOCALKBPATH%" /p:TestType="Unit" /p:GXServerUser=%gxserveruser% /p:GXServerPass=%gxserverpwd% 
                         '''
                     }
                 }
