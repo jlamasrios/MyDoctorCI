@@ -42,17 +42,14 @@ try{
                     }
                 }
                 stage('Run unit tests'){
+					
                     withCredentials([usernamePassword(credentialsId: "${credId}", passwordVariable: 'gxserverpwd', usernameVariable: 'gxserveruser')]){
                         bat label: 'Run unit tests', script: '''
                         "%msbuildtool%\\msbuild.exe" "%GXPATH%\\GXtest.msbuild" /t:RunAllTests /p:KBPath="%LOCALKBPATH%" /p:TestType="Unit" /p:GXServerUser=%gxserveruser% /p:GXServerPass=%gxserverpwd% 
                         '''
                     }
+					junit "${localKbPath}/TestResultsJUnit*.xml'
                 }
-				post {
-					always {
-						junit 'target/surefire-reports/*.xml'
-					}
-				}
             }
         }
     }
