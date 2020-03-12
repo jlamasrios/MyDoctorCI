@@ -52,7 +52,7 @@ try{
                         '''
 					*/
                     }
-					junit "g:\\kbs\mydoctorci\\TestResultJUnit.xml"
+					junit "g:\\kbs\\mydoctorci\\TestResultJUnit.xml"
                 }
             }
         }
