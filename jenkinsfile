@@ -32,23 +32,27 @@ try{
 				"SERVERKB=${serverKB}",
 				"LOCALKBPATH=${localKbPath}",
 				"WebBackofficeName=WebBackoffice",
-				"DeployPath=${localKbPath}\\Deploy",
+				"DeployPath=${localKbPath}\\Deploy\\",
 				"DBMS=${dbms}"
 			]) {
                 stage('KB Build'){
 					git changelog: false, poll: false, url: 'https://github.com/jlamasrios/MyDoctorCI.git'
                     withCredentials([usernamePassword(credentialsId: "${credId}", passwordVariable: 'gxserverpwd', usernameVariable: 'gxserveruser')]) {
+					/*
                         bat label: 'Build all', script: '''
                         "%msbuildtool%\\msbuild.exe" "%MSBUILDSCRIPT%" /t:build /p:GX_PROGRAM_DIR="%GXPATH%" /p:WorkingDirectory="%LOCALKBPATH%" /p:ServerUrl="%GXSERVERURL%" /p:DbaseServerInstance="%DBMS%" /p:ServerKbAlias="%SERVERKB%" /p:ServerUsername=%gxserveruser% /p:ServerPassword=%gxserverpwd%
                         '''
+					*/
                     }
                 }
                 stage('Run unit tests'){
 					
                     withCredentials([usernamePassword(credentialsId: "${credId}", passwordVariable: 'gxserverpwd', usernameVariable: 'gxserveruser')]){
+					/*
                         bat label: 'Run unit tests', script: '''
                         "%msbuildtool%\\msbuild.exe" "%GXPATH%\\GXtest.msbuild" /t:RunAllTests /p:KBPath="%LOCALKBPATH%" /p:TestType="Unit" /p:GXServerUser=%gxserveruser% /p:GXServerPass=%gxserverpwd%
                         '''
+					*/
                     }
 					junit 'TestResultJUnit.xml'
                 }
@@ -59,7 +63,7 @@ try{
 				}
 				stage('Create Deploy Package') {
 					bat label: 'Create Deploy Package', script: '''
-					"%msbuildtool%\\msbuild.exe" /nologo /logger:DeployLogger,"%GXPATH%\\GeneXus.Deploy.MSBuild.Tasks.dll" /verbosity:normal /ToolsVersion:4.0 "%DeployPath%\\%WebBackofficeName%.gxdproj" /p:GX_PROGRAM_DIR="%GXPATH%" /t:CreatePackage
+					"%msbuildtool%\\msbuild.exe" /nologo /logger:DeployLogger,"%GXPATH%\\GeneXus.Deploy.MSBuild.Tasks.dll" /verbosity:normal /ToolsVersion:4.0 "%DeployPath%%WebBackofficeName%.gxdproj" /p:GX_PROGRAM_DIR="%GXPATH%" /t:CreatePackage
 					'''
 				}
 				stage('Create Docker File') {
