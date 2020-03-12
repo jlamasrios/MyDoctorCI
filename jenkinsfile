@@ -36,11 +36,9 @@ try{
                 stage('KB Build'){
 					git changelog: false, poll: false, url: 'https://github.com/jlamasrios/MyDoctorCI.git'
                     withCredentials([usernamePassword(credentialsId: "${credId}", passwordVariable: 'gxserverpwd', usernameVariable: 'gxserveruser')]) {
-					/*
                         bat label: 'Build all', script: '''
                         "%msbuildtool%\\msbuild.exe" "%MSBUILDSCRIPT%" /t:build /p:GX_PROGRAM_DIR="%GXPATH%" /p:WorkingDirectory="%LOCALKBPATH%" /p:ServerUrl="%GXSERVERURL%" /p:DbaseServerInstance="%DBMS%" /p:ServerKbAlias="%SERVERKB%" /p:ServerUsername=%gxserveruser% /p:ServerPassword=%gxserverpwd%
                         '''
-					*/
                     }
                 }
                 stage('Run unit tests'){
