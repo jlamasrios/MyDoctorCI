@@ -36,20 +36,29 @@ try{
                 stage('KB Build'){
 					git changelog: false, poll: false, url: 'https://github.com/jlamasrios/MyDoctorCI.git'
                     withCredentials([usernamePassword(credentialsId: "${credId}", passwordVariable: 'gxserverpwd', usernameVariable: 'gxserveruser')]) {
+					/*
                         bat label: 'Build all', script: '''
                         "%msbuildtool%\\msbuild.exe" "%MSBUILDSCRIPT%" /t:build /p:GX_PROGRAM_DIR="%GXPATH%" /p:WorkingDirectory="%LOCALKBPATH%" /p:ServerUrl="%GXSERVERURL%" /p:DbaseServerInstance="%DBMS%" /p:ServerKbAlias="%SERVERKB%" /p:ServerUsername=%gxserveruser% /p:ServerPassword=%gxserverpwd%
                         '''
+					*/
                     }
                 }
                 stage('Run unit tests'){
 					
                     withCredentials([usernamePassword(credentialsId: "${credId}", passwordVariable: 'gxserverpwd', usernameVariable: 'gxserveruser')]){
+					/*
                         bat label: 'Run unit tests', script: '''
                         "%msbuildtool%\\msbuild.exe" "%GXPATH%\\GXtest.msbuild" /t:RunAllTests /p:KBPath="%LOCALKBPATH%" /p:TestType="Unit" /p:GXServerUser=%gxserveruser% /p:GXServerPass=%gxserverpwd%
                         '''
+					*/
                     }
 					junit 'TestResultJUnit.xml'
                 }
+				stage('Creating Deploy Specification') {
+					bat label: 'Create Deploy Spec', script: '''
+					"%msbuildtool%\\msbuild.exe" /nologo /logger:DeployLogger,"E:\gx\GXMyDoctor\GeneXus.Deploy.MSBuild.Tasks.dll" /verbosity:normal /ToolsVersion:4.0 "%GXPATH%\\deploy.msbuild" /p:KBPath="%LOCALKBPATH%" /p:DeploymentUnit="Backoffice" /p:ProjectName="Backoffice" /p:ObjectNames="DeploymentUnit:Backoffice" /p:ApplicationServer="IIS8" /p:GX_PROGRAM_DIR="%GXPATH%" /p:INCLUDE_GAM="False" /t:CreateDeploy
+					'''
+				}
             }
         }
     }
