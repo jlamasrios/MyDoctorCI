@@ -48,7 +48,7 @@ try{
                         "%msbuildtool%\\msbuild.exe" "%GXPATH%\\GXtest.msbuild" /t:RunAllTests /p:KBPath="%LOCALKBPATH%" /p:TestType="Unit" /p:GXServerUser=%gxserveruser% /p:GXServerPass=%gxserverpwd% 
                         '''
                     }
-					junit '${localKbPath}\\TestResultsJUnit*.xml'
+					junit "g:\\kbs\\MyDoctorCI\\TestResultsJUnit*.xml"
                 }
             }
         }
