@@ -46,13 +46,11 @@ try{
                 stage('Run unit tests'){
 					
                     withCredentials([usernamePassword(credentialsId: "${credId}", passwordVariable: 'gxserverpwd', usernameVariable: 'gxserveruser')]){
-					/*
                         bat label: 'Run unit tests', script: '''
-                        "%msbuildtool%\\msbuild.exe" "%GXPATH%\\GXtest.msbuild" /t:RunAllTests /p:KBPath="%LOCALKBPATH%" /p:TestType="Unit" /p:GXServerUser=%gxserveruser% /p:GXServerPass=%gxserverpwd% 
+                        "%msbuildtool%\\msbuild.exe" "%GXPATH%\\GXtest.msbuild" /t:Debug /p:KBPath="%LOCALKBPATH%" /p:TestType="Unit" /p:GXServerUser=%gxserveruser% /p:GXServerPass=%gxserverpwd%
                         '''
-					*/
                     }
-					junit 'g:\\kbs\\mydoctorci\\TestResultJUnit.xml'
+					junit 'TestResultJUnit.xml'
                 }
             }
         }
