@@ -33,6 +33,8 @@ try{
 				"LOCALKBPATH=${localKbPath}",
 				"WebBackofficeName=WebBackoffice",
 				"DeployPath=${localKbPath}\\Deploy",
+				"DeployPackagePath=${localKbPath}\\Deploy\\Docker",
+				"DockerImageName=mydoctor-web-backoffice",
 				"DBMS=${dbms}"
 			]) {
                 stage('KB Build'){
@@ -61,10 +63,12 @@ try{
 				}
 				stage('Create Deploy Package') {
 					bat label: 'Create Deploy Package', script: '''
-					"%msbuildtool%\\msbuild.exe" /nologo /logger:DeployLogger,"%GXPATH%\\GeneXus.Deploy.MSBuild.Tasks.dll" /verbosity:normal /ToolsVersion:4.0 "%DeployPath%\\%WebBackofficeName%.gxdproj" /p:GX_PROGRAM_DIR="%GXPATH%" /t:CreatePackage
+					"%msbuildtool%\\msbuild.exe" /nologo /logger:DeployLogger,"%GXPATH%\\GeneXus.Deploy.MSBuild.Tasks.dll" /verbosity:normal /ToolsVersion:4.0 "%DeployPath%\\%WebBackofficeName%.gxdproj" /p:DeployFileFullPath="%DeployPackagePath%" /p:GX_PROGRAM_DIR="%GXPATH%" /t:CreatePackage
 					'''
 				}
 				stage('Create Docker File') {
+					bat label: 'Create Docker File', script: '''
+					"%msbuildtool%\\msbuild.exe" /nologo /logger:DeployLogger,"%GXPATH%\\GeneXus.Deploy.MSBuild.Tasks.dll" /verbosity:normal /ToolsVersion:4.0 "%GXPATH%\deploy.msbuild" /p:DOCKER_BASE_IMAGE="genexus/dotnet:4.6.2" /p:DOCKER_MAINTAINER="JLR <JLR@example.com>" /p:DOCKER_WEBAPPLOCATION="c:/inetpub/wwwroot/" /p:DOCKER_IMAGE_NAME="%DockerImageName%" /p:GENERATOR="C#" /p:GX_PROGRAM_DIR="%GXPATH%" /p:DeploySource="%DeployPackagePath%\\%WebBackofficeName%.zip" /t:Deploy
 				}
             }
         }
