@@ -8,7 +8,7 @@ try{
 		def localKbPath = 'G:\\KBs\\MyDoctorCI'
 		def dbms = '.\\SQLEXPRESS'
 		
-        stage("Checkout"){
+        stage("Update"){
             withFolderProperties{
                 checkout scm: [
                     $class: 'GeneXusServerSCM',
@@ -37,7 +37,7 @@ try{
 				"DockerImageName=mydoctor-web-backoffice",
 				"DBMS=${dbms}"
 			]) {
-                stage('KB Build'){
+                stage('Build'){
 					git changelog: false, poll: false, url: 'https://github.com/jlamasrios/MyDoctorCI.git'
                     withCredentials([usernamePassword(credentialsId: "${credId}", passwordVariable: 'gxserverpwd', usernameVariable: 'gxserveruser')]) {
 					/*
@@ -47,7 +47,7 @@ try{
 					*/
                     }
                 }
-                stage('Run unit tests'){
+                stage('Test'){
 					
                     withCredentials([usernamePassword(credentialsId: "${credId}", passwordVariable: 'gxserverpwd', usernameVariable: 'gxserveruser')]){
                         bat label: 'Run unit tests', script: '''
@@ -56,12 +56,12 @@ try{
                     }
 					junit 'TestResultJUnit.xml'
                 }
-				stage('Create Deploy Specification') {
+				stage('Calculate Deploy') {
 					bat label: 'Create Deploy Spec', script: '''
 					"%msbuildtool%\\msbuild.exe" /nologo /logger:DeployLogger,"%GXPATH%\\GeneXus.Deploy.MSBuild.Tasks.dll" /verbosity:normal /ToolsVersion:4.0 "%GXPATH%\\deploy.msbuild" /p:KBPath="%LOCALKBPATH%" /p:ProjectName="%WebBackofficeName%" /p:ObjectNames="DeploymentUnit:WebBackoffice" /p:ApplicationServer="IIS8" /p:GX_PROGRAM_DIR="%GXPATH%" /p:INCLUDE_GAM="False" /p:OutputPath="%DeployPath%" /t:CreateDeploy
 					'''
 				}
-				stage('Create Deploy Package') {
+				stage('Package') {
 					bat label: 'Create Deploy Package', script: '''
 					"%msbuildtool%\\msbuild.exe" /nologo /logger:DeployLogger,"%GXPATH%\\GeneXus.Deploy.MSBuild.Tasks.dll" /verbosity:normal /ToolsVersion:4.0 "%DeployPath%\\%WebBackofficeName%.gxdproj" /p:DeployFileFullPath="%DeployPackagePath%" /p:GX_PROGRAM_DIR="%GXPATH%" /t:CreatePackage
 					'''
