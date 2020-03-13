@@ -40,9 +40,11 @@ try{
                 stage('KB Build'){
 					git changelog: false, poll: false, url: 'https://github.com/jlamasrios/MyDoctorCI.git'
                     withCredentials([usernamePassword(credentialsId: "${credId}", passwordVariable: 'gxserverpwd', usernameVariable: 'gxserveruser')]) {
+					/*
                         bat label: 'Build all', script: '''
                         "%msbuildtool%\\msbuild.exe" "%MSBUILDSCRIPT%" /t:build /p:GX_PROGRAM_DIR="%GXPATH%" /p:WorkingDirectory="%LOCALKBPATH%" /p:ServerUrl="%GXSERVERURL%" /p:DbaseServerInstance="%DBMS%" /p:ServerKbAlias="%SERVERKB%" /p:ServerUsername=%gxserveruser% /p:ServerPassword=%gxserverpwd%
                         '''
+					*/
                     }
                 }
                 stage('Run unit tests'){
@@ -58,7 +60,7 @@ try{
 					bat label: 'Create Deploy Spec', script: '''
 					"%msbuildtool%\\msbuild.exe" /nologo /logger:DeployLogger,"%GXPATH%\\GeneXus.Deploy.MSBuild.Tasks.dll" /verbosity:normal /ToolsVersion:4.0 "%GXPATH%\\deploy.msbuild" /p:KBPath="%LOCALKBPATH%" /p:ProjectName="%WebBackofficeName%" /p:ObjectNames="DeploymentUnit:WebBackoffice" /p:ApplicationServer="IIS8" /p:GX_PROGRAM_DIR="%GXPATH%" /p:INCLUDE_GAM="False" /p:OutputPath="%DeployPath%" /t:CreateDeploy
 					'''
-					archive "%DeployPath%\\%WebBackofficeName%.gxdproj"
+					archiveArtifacts "${localKbPath}/Deploy/WebBackoffice.gxdproj"
 				}
 				stage('Create Deploy Package') {
 					bat label: 'Create Deploy Package', script: '''
