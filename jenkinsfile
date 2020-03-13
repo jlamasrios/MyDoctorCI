@@ -70,7 +70,7 @@ try{
 					bat label: 'Create Docker File', script: '''
 					"%msbuildtool%\\msbuild.exe" /nologo /logger:DeployLogger,"%GXPATH%\\GeneXus.Deploy.MSBuild.Tasks.dll" /verbosity:normal /ToolsVersion:4.0 "%GXPATH%\\DeploymentTargets\\Docker\\deploy.msbuild" /p:DOCKER_BASE_IMAGE="genexus/dotnet:4.6.2" /p:DOCKER_MAINTAINER="JLR <JLR@example.com>" /p:DOCKER_WEBAPPLOCATION="c:/inetpub/wwwroot/" /p:DOCKER_IMAGE_NAME="%DockerImageName%" /p:GENERATOR="C#" /p:GX_PROGRAM_DIR="%GXPATH%" /p:DeploySource="%DeployPackagePath%\\%WebBackofficeName%.zip" /t:Deploy
 					'''
-					archiveArtitfacts **/*.gxdproj, **/*.zip, **/dockerfile
+					archiveArtifacts artifacts: 'Deploy/**/*.gxdproj, Deploy/**/*.zip, Deploy/**/dockerfile'
 				}
             }
         }
