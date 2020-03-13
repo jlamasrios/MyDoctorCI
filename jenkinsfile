@@ -32,8 +32,8 @@ try{
 				"SERVERKB=${serverKB}",
 				"LOCALKBPATH=${localKbPath}",
 				"WebBackofficeName=WebBackoffice",
-				"DeployPath=${localKbPath}\\Deploy",
-				"DeployPackagePath=${localKbPath}\\Deploy\\Docker",
+				"DeployPath=${workspace}\\Deploy",
+				"DeployPackagePath=${workspace}\\Deploy\\Docker",
 				"DockerImageName=mydoctor-web-backoffice",
 				"DBMS=${dbms}"
 			]) {
@@ -60,7 +60,6 @@ try{
 					bat label: 'Create Deploy Spec', script: '''
 					"%msbuildtool%\\msbuild.exe" /nologo /logger:DeployLogger,"%GXPATH%\\GeneXus.Deploy.MSBuild.Tasks.dll" /verbosity:normal /ToolsVersion:4.0 "%GXPATH%\\deploy.msbuild" /p:KBPath="%LOCALKBPATH%" /p:ProjectName="%WebBackofficeName%" /p:ObjectNames="DeploymentUnit:WebBackoffice" /p:ApplicationServer="IIS8" /p:GX_PROGRAM_DIR="%GXPATH%" /p:INCLUDE_GAM="False" /p:OutputPath="%DeployPath%" /t:CreateDeploy
 					'''
-					archiveArtifacts "${localKbPath}/Deploy/WebBackoffice.gxdproj"
 				}
 				stage('Create Deploy Package') {
 					bat label: 'Create Deploy Package', script: '''
@@ -71,6 +70,7 @@ try{
 					bat label: 'Create Docker File', script: '''
 					"%msbuildtool%\\msbuild.exe" /nologo /logger:DeployLogger,"%GXPATH%\\GeneXus.Deploy.MSBuild.Tasks.dll" /verbosity:normal /ToolsVersion:4.0 "%GXPATH%\\DeploymentTargets\\Docker\\deploy.msbuild" /p:DOCKER_BASE_IMAGE="genexus/dotnet:4.6.2" /p:DOCKER_MAINTAINER="JLR <JLR@example.com>" /p:DOCKER_WEBAPPLOCATION="c:/inetpub/wwwroot/" /p:DOCKER_IMAGE_NAME="%DockerImageName%" /p:GENERATOR="C#" /p:GX_PROGRAM_DIR="%GXPATH%" /p:DeploySource="%DeployPackagePath%\\%WebBackofficeName%.zip" /t:Deploy
 					'''
+					archiveArtitfacts **/*.gxdproj, **/*.zip, **/dockerfile
 				}
             }
         }
